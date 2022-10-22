@@ -9,13 +9,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class DataGenerator extends Thread {
   private BlockingQueue<LiftRideEvent> queue = new LinkedBlockingQueue<>();
   private LiftRideEvent event;
-  private CountDownLatch latch;
   private int numOfEvents;
   private int MAX_QUEUE_SIZE = 1000000;
 
-  public DataGenerator(int size, CountDownLatch latch) {
+  public DataGenerator(int size) {
     this.numOfEvents = size;
-    this.latch = latch;
   }
 
   public BlockingQueue<LiftRideEvent> getQueue() {
@@ -41,7 +39,6 @@ public class DataGenerator extends Thread {
       event = new LiftRideEvent(liftRide, skierID, resortID, seasonID, dayID);
       queue.offer(event);
     }
-    latch.countDown();
     System.out.println("Data generation completed");
   }
   // q1: wait() & notifyAll() for consumer/producer?

@@ -23,8 +23,7 @@ public class Main {
     int NUMOFTHREADS1 = 32;
     int NUMOFTHREADS2 = 200;
     RequestCounter counter = new RequestCounter();
-    CountDownLatch generatorLatch = new CountDownLatch(1);
-    DataGenerator dataGenerator = new DataGenerator(NUMOFREQUEST, generatorLatch);
+    DataGenerator dataGenerator = new DataGenerator(NUMOFREQUEST);
     new Thread(dataGenerator).start();
     System.out.println("Generator started");
 
@@ -48,7 +47,6 @@ public class Main {
 
 //    Sender firstBatch = new Sender(1, NUMOFREQUEST, counter,
 //        dataGenerator, firstBatchLatch, IP, PORT, records);
-    generatorLatch.await();
 
     System.out.println("Sending first batch");
     long start = System.currentTimeMillis();
