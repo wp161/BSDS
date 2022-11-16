@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
   public static void main(String[] args) throws InterruptedException, Exception {
-    String IP = "54.70.64.15";
-    int PORT = 8080;
+    String IP = "tomcat-alb-530933494.us-west-2.elb.amazonaws.com";
+    int PORT = 80;
     int NUMOFREQUEST = 200000;
     int NUMOFTHREADS1 = 32;
     int NUMOFTHREADS2 = 200;

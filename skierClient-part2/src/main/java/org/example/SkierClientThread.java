@@ -51,7 +51,7 @@ public class SkierClientThread extends Thread {
     // set up
     ApiClient apiClient = new ApiClient();
     SkiersApi apiInstance = new SkiersApi(apiClient);
-    apiClient.setBasePath("http://" + ip + ":" + port + "/SkierServer_war_exploded");
+    apiClient.setBasePath("http://" + ip + ":" + port + "/SkierServer_SQS");
     int requestSent = 0;
     // check if queue is empty
     boolean caughtException = false;

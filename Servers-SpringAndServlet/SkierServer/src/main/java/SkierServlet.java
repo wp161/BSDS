@@ -1,6 +1,7 @@
 import Exceptions.InvalidParameterException;
 import Exceptions.InvalidUrlException;
 import Objects.LiftRideDetail;
+import aws.sqs.SQSProxy;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import utilities.JsonUtilities;
@@ -19,8 +20,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SkierServlet extends HttpServlet {
-
+    private SQSProxy sqsProxy;
     public void init() throws ServletException {
+        sqsProxy = new SQSProxy();
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -34,6 +36,7 @@ public class SkierServlet extends HttpServlet {
             LiftRide liftRide = new Gson().fromJson(requestData, LiftRide.class);
             validateLiftRide(liftRide);
             LiftRideDetail detail = createLiftRideDetail(parameters, liftRide);
+            sqsProxy.sendData(detail);
             responseBody.put("message", "created details");
             resp.setStatus(201);
             resp.getWriter().write(JsonUtilities.toJsonString(responseBody));
@@ -69,7 +72,7 @@ public class SkierServlet extends HttpServlet {
         parameters.put("resortId", parts[1]);
         parameters.put("seasonId", parts[3]);
         parameters.put("dayId", parts[5]);
-        parameters.put("skierId", parts[6]);
+        parameters.put("skierId", parts[7]);
         return parameters;
     }
     private void validateLiftRide(LiftRide liftRide) throws InvalidParameterException {
