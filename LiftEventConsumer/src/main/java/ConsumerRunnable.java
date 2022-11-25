@@ -18,12 +18,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConsumerRunnable implements Runnable{
   private AmazonSQS sqs;
   private String queueUrl;
+  private DynamoDbProxy ddbProxy;
   private Map<String, List<LiftRideDetail>> map = new HashMap<String, List<LiftRideDetail>>();
   private boolean done = false;
 
-  public ConsumerRunnable(AmazonSQS sqs, String url) {
+  public ConsumerRunnable(AmazonSQS sqs, String url, DynamoDbProxy ddbProxy) {
     this.sqs = sqs;
     this.queueUrl = url;
+    this.ddbProxy = ddbProxy;
   }
 
 
@@ -41,26 +43,30 @@ public class ConsumerRunnable implements Runnable{
     while (!done) {
       ReceiveMessageRequest request = new ReceiveMessageRequest()
           .withQueueUrl(queueUrl)
-          .withVisibilityTimeout(10)
+          .withVisibilityTimeout(20)
           .withMaxNumberOfMessages(10);
       List<Message> messages = sqs.receiveMessage(request).getMessages();
       List<DeleteMessageBatchRequestEntry> entries = new ArrayList<DeleteMessageBatchRequestEntry>();
+      List<LiftRideDetail> details = new ArrayList<>();
       for (Message message: messages) {
         entries.add(new DeleteMessageBatchRequestEntry().withId(UUID.randomUUID().toString())
             .withReceiptHandle(message.getReceiptHandle()));
         Map<String, MessageAttributeValue> attributes = message.getMessageAttributes();
         LiftRideDetail detail = new Gson().fromJson(message.getBody(), LiftRideDetail.class);
-        List<LiftRideDetail> details = map.getOrDefault(detail.getSkierId(), new ArrayList<LiftRideDetail>());
+//        List<LiftRideDetail> details = map.getOrDefault(detail.getSkierId(), new ArrayList<LiftRideDetail>());
         details.add(detail);
-        map.put(detail.getSkierId(), details);
-//        System.out.println("r");
+//        map.put(detail.getSkierId(), details);
       }
+
+      if (details.size() > 0) {
+        ddbProxy.insertData(details);
+      }
+
       if (entries.size() > 0) {
         DeleteMessageBatchRequest request1 = new DeleteMessageBatchRequest()
             .withQueueUrl(queueUrl)
             .withEntries(entries);
         sqs.deleteMessageBatch(request1);
-//        System.out.println("Deleted!!");
       }
     }
   }

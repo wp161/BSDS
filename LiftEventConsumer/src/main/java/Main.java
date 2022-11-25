@@ -4,6 +4,8 @@ import com.amazon.sqs.javamessaging.SQSConnection;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.ClientConfigurationFactory;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.GetQueueUrlRequest;
@@ -31,9 +33,13 @@ public class Main {
 
     int consumerCount = 550;
     List<ConsumerRunnable> consumers = new ArrayList<>();
+    AmazonDynamoDB ddbClient = AmazonDynamoDBClientBuilder.standard().withRegion("us-west-2")
+        .withClientConfiguration(clientConfiguration).build();
+
+    DynamoDbProxy ddbProxy = new DynamoDbProxy(ddbClient);
 
     for (int i = 0; i < consumerCount; i++) {
-      ConsumerRunnable consumer = new ConsumerRunnable(sqsClient, queueUrl);
+      ConsumerRunnable consumer = new ConsumerRunnable(sqsClient, queueUrl, ddbProxy);
       new Thread(consumer).start();
       consumers.add(consumer);
     }
@@ -61,6 +67,7 @@ public class Main {
 //    Thread.sleep(1000 * 10); // wait 10 seconds for the threads to finish
 
     sqsClient.shutdown();
+    ddbClient.shutdown();
     System.exit(0);
   }
 }

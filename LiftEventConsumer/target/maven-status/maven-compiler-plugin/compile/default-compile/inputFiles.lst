@@ -2,8 +2,7 @@
 /Users/Wenbo/Desktop/CS6650/LiftEventConsumer/src/main/java/Objects/Resort.java
 /Users/Wenbo/Desktop/CS6650/LiftEventConsumer/src/main/java/Objects/LiftRide.java
 /Users/Wenbo/Desktop/CS6650/LiftEventConsumer/src/main/java/Objects/LiftRideDetail.java
-/Users/Wenbo/Desktop/CS6650/LiftEventConsumer/src/main/java/ConsumerThread.java
-/Users/Wenbo/Desktop/CS6650/LiftEventConsumer/src/main/java/BatchConsumer.java
+/Users/Wenbo/Desktop/CS6650/LiftEventConsumer/src/main/java/DynamoDbProxy.java
 /Users/Wenbo/Desktop/CS6650/LiftEventConsumer/src/main/java/ConsumerRunnable.java
 /Users/Wenbo/Desktop/CS6650/LiftEventConsumer/src/main/java/MessageReader.java
 /Users/Wenbo/Desktop/CS6650/LiftEventConsumer/src/main/java/Main.java
